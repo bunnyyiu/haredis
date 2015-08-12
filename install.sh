@@ -6,6 +6,7 @@ apt-get install curl -y
 apt-get install automake -y
 apt-get install libtool -y
 apt-get install git -y
+apt-get install psmisc -y
 
 apt-get install redis-cli -y
 systemctl stop redis-server
@@ -32,3 +33,5 @@ rm -rf twemproxy
 cp redisConfigs/* /etc/redis/
 cp haproxy.cfg /etc/haproxy/haproxy.cfg
 cp twemproxy.cfg /etc/twemproxy.cfg
+
+cp notification.sh /usr/local/sbin

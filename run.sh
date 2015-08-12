@@ -11,7 +11,7 @@ redis-server /etc/redis/redis_s2_2.conf
 redis-server /etc/redis/redis_s2_3.conf
 
 # sentinel
-redis-server /etc/redis/sentinel.conf  --sentinel
+redis-server /etc/redis/sentinel.conf --sentinel
 
 # haproxy
 /usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg

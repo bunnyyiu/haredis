@@ -35,3 +35,7 @@ cp haproxy.cfg /etc/haproxy/haproxy.cfg
 cp twemproxy.cfg /etc/twemproxy.cfg
 
 cp notification.sh /usr/local/sbin
+
+# remove old data, for testing
+rm /var/lib/redis/*.rdb
+rm /var/lib/redis/*.aof

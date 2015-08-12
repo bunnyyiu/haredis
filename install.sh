@@ -8,7 +8,7 @@ apt-get install libtool -y
 apt-get install git -y
 apt-get install psmisc -y
 
-apt-get install redis-cli -y
+apt-get install redis-server -y
 systemctl stop redis-server
 systemctl disable redis-server
 

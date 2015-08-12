@@ -11,10 +11,10 @@ redis-server /etc/redis/redis_s2_2.conf
 redis-server /etc/redis/redis_s2_3.conf
 
 # sentinel
-redis-server sentinel.conf  --sentinel
+redis-server /etc/redis/sentinel.conf  --sentinel
 
 # haproxy
-/usr/sbin/haproxy -f haproxy.cfg
+/usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg
 
 # twemproxy
-/usr/local/sbin/nutcracker -c twemproxy.cfg -d
+/usr/local/sbin/nutcracker -c /etc/twemproxy.cfg -d

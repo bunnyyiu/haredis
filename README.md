@@ -1,4 +1,4 @@
-# Redis Shared HA - twemproxy + sentinel + haproxy
+# Sharding Redis HA - twemproxy + sentinel + haproxy
 
 - twemproxy: sharding
 - sentinel: autoswitch master/slave

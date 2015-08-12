@@ -2,21 +2,21 @@
 
 apt-get update
 
-apt-get install curl
-apt-get install automake
-apt-get install libtool
-apt-get install git
+apt-get install curl -y
+apt-get install automake -y
+apt-get install libtool -y
+apt-get install git -y
 
-apt-get install redis-cli
+apt-get install redis-cli -y
 systemctl stop redis-server
 systemctl disable redis-server
 
-apt-get install haproxy
+apt-get install haproxy -y
 systemctl stop haproxy
 systemctl disable haproxy
 
-apt-get install nodejs
-apt-get install npm
+apt-get install nodejs -y
+apt-get install npm -y
 npm install haproxy -g
 
 pushd .

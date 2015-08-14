@@ -39,3 +39,5 @@ cp notification.sh /usr/local/sbin
 # remove old data, for testing
 rm /var/lib/redis/*.rdb
 rm /var/lib/redis/*.aof
+
+mkdir -p /var/run/redis

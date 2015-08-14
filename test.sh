@@ -164,14 +164,14 @@ function testcase4 {
 
   echo "Test case 4 : kill flour redis instances (two instances [one master, one slave] in each shard) ($config1, $shard1Slaves, $config2, $shard2Slaves):"
 
-  #killRedisByConfig $shard1Slaves
+  killRedisByConfig $shard1Slaves
   killRedisByConfig $config1
-  #killRedisByConfig $shard2Slaves
+  killRedisByConfig $shard2Slaves
   killRedisByConfig $config2
 
-  # poll for 5 seconds
-  waitForShardReady $name1 5 &> /dev/null &
-  waitForShardReady $name2 5 &> /dev/null &
+  # poll for 10 seconds
+  waitForShardReady $name1 10 &> /dev/null &
+  waitForShardReady $name2 10 &> /dev/null &
   wait
 
   newConfig1=$(getShardConfig $name1)

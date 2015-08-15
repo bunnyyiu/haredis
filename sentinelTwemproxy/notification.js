@@ -10,8 +10,8 @@ var SWITCH_MASTER = '+switch-master';
 var MONITOR = '+monitor';
 var SHARD_INDEX = /[0-9]+$/;
 var MASTER = 'master';
-var LOG_PATH = '/var/log/twemproxy_notification.log';
-var PID_FILE = '/var/run/sentinel_twemproxy.pid';
+var LOG_PATH = '/var/run/nutcracker/twemproxy_notification.log';
+var PID_FILE = '/var/run/nutcracker/sentinel_twemproxy.pid';
 
 var log = function (content, callback) {
   fs.appendFile(LOG_PATH, content + "\n", callback);
@@ -104,12 +104,13 @@ var processSwitchMasterMessage = function () {
   var oldPort = args[2];
   var ip = args[3];
   var port = args[4];
-  
+
   var currentConfig = yamlToJson(TWEMPROXY_PATH);
   if (!currentConfig) {
     return;
   }
-  var newConfig = updateConfig(currentConfig, shardName, oldIp, oldPort, ip, port);
+  var newConfig = updateConfig(currentConfig, shardName, oldIp, oldPort,
+                               ip, port);
   writeConfig(newConfig, TWEMPROXY_PATH);
   restartTwemproxy();
 };

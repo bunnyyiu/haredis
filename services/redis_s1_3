@@ -41,7 +41,10 @@ case "$1" in
 	echo -n "Starting $DESC: "
 	mkdir -p $RUNDIR
 	touch $PIDFILE
-	chown redis:redis $RUNDIR $PIDFILE $CONFIG $LOGFILE $RDB $AOF
+	chown redis:redis $RUNDIR $PIDFILE $CONFIG
+        [ -f $LOGFILE ] && chown redis:redis $LOGFILE
+        [ -f $RDB ] && chown redis:redis $RDB
+        [ -f $AOF ] && chown redis:redis $AOF
 	chmod 755 $RUNDIR
 
 	if [ -n "$ULIMIT" ]

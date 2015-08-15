@@ -12,8 +12,13 @@ var SHARD_INDEX = /[0-9]+$/;
 var MASTER = 'master';
 var LOG_PATH = '/var/run/nutcracker/twemproxy_notification.log';
 var PID_FILE = '/var/run/nutcracker/sentinel_twemproxy.pid';
+var WATCH_FILE = '/var/lib/redis/nutcracker_update';
+var WATCH_PID = '/var/run/nutcracker/nutcracker.WATCH.pid'
 
 var log = function (content, callback) {
+  if (!callback) {
+    callback = function () {};
+  }
   fs.appendFile(LOG_PATH, content + "\n", callback);
 };
 
@@ -111,8 +116,18 @@ var processSwitchMasterMessage = function () {
   }
   var newConfig = updateConfig(currentConfig, shardName, oldIp, oldPort,
                                ip, port);
-  writeConfig(newConfig, TWEMPROXY_PATH);
-  restartTwemproxy();
+  var pathToWrite = WATCH_FILE;
+  var writeToWatchFile = true;
+  try {
+    fs.statSync(WATCH_PID);
+  } catch (e) {	
+    writeToWatchFile = false;
+  }
+  var pathToWrite = writeToWatchFile ? WATCH_FILE : TWEMPROXY_PATH;
+  writeConfig(newConfig, pathToWrite);
+  if (!writeToWatchFile) {
+    restartTwemproxy();
+  }
 };
 
 var processMonitorMessage = function () {
@@ -125,8 +140,18 @@ var processMonitorMessage = function () {
     return;
   }
   var newConfig = updateConfig(currentConfig, shardName, null, null, ip, port);
-  writeConfig(newConfig, TWEMPROXY_PATH);
-  restartTwemproxy();
+  var pathToWrite = WATCH_FILE;
+  var writeToWatchFile = true;
+  try {
+    fs.statSync(WATCH_PID);
+  } catch (e) {	
+    writeToWatchFile = false;
+  }
+  var pathToWrite = writeToWatchFile ? WATCH_FILE : TWEMPROXY_PATH;
+  writeConfig(newConfig, pathToWrite);
+  if (!writeToWatchFile) {
+    restartTwemproxy();
+  }
 };
 
 log(process.argv);

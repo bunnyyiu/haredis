@@ -21,6 +21,9 @@ STATSPORT=22222
 DAEMON_ARGS="-c $CONFFILE -o $LOGFILE -p $PIDFILE -s $STATSPORT -v 11 -m 512 -d"
 #DAEMON_ARGS="-c $CONFFILE -p $PIDFILE -s $STATSPORT -d"
 SCRIPTNAME=/etc/init.d/$NAME
+FILE_TO_WATCH=/var/lib/redis/nutcracker_update
+WATCH_PID_FILE=/var/run/nutcracker/$NAME.WATCH.pid
+REDIS_USER=redis
 
 ulimit -Hn 100000
 ulimit -Sn 100000
@@ -35,6 +38,10 @@ ulimit -Sn 100000
 
 do_start()
 {
+    if [ -f $WATCH_PID_FILE ]; then
+      kill $(cat $WATCH_PID_FILE) 2> /dev/null
+      rm $WATCH_PID_FILE 2> /dev/null
+    fi
     touch $PIDFILE
     mkdir -p /var/run/nutcracker
     chown $USER:$GROUP -R /var/run/nutcracker
@@ -47,10 +54,17 @@ do_start()
             0|1) echo "STARTED." ;;
             2) echo "FAILED." ;;
         esac
+    test -e $FILE_TO_WATCH || (touch $FILE_TO_WATCH;chown $REDIS_USER:$REDIS_USER $FILE_TO_WATCH)
+    iwatch -c "cat $FILE_TO_WATCH > $CONFFILE; chown $USER:$GROUP $CONFFILE;service $NAME restart" $FILE_TO_WATCH &
+    echo $! > $WATCH_PID_FILE
 }
 
 do_stop()
 {
+    if [ -f $WATCH_PID_FILE ]; then
+      kill $(cat $WATCH_PID_FILE) 2> /dev/null
+      rm $WATCH_PID_FILE 2> /dev/null
+    fi
     echo -n "Stopping ${NAME}: "
     start-stop-daemon --stop --quiet --pidfile $PIDFILE --exec $DAEMON || true
 

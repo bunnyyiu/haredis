@@ -7,6 +7,7 @@ apt-get install automake -y
 apt-get install libtool -y
 apt-get install git -y
 apt-get install psmisc -y
+apt-get install iwatch -y
 
 apt-get install redis-server -y
 systemctl stop redis-server

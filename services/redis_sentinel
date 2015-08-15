@@ -1,7 +1,7 @@
 #! /bin/sh
 ### BEGIN INIT INFO
 # Provides:		redis_sentinel
-# Required-Start:	$syslog $remote_fs
+# Required-Start:	$syslog $remote_fs $redis_s1_1 $redis_s1_2 $redis_s2_3 $redis_s2_1 $redis_s2_2 $redis_s2_3
 # Required-Stop:	$syslog $remote_fs
 # Should-Start:		$local_fs
 # Should-Stop:		$local_fs
@@ -45,7 +45,8 @@ case "$1" in
 		ulimit -n $ULIMIT
 	fi
 
-	if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
+        # Run as root as it require to restart another process
+	if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS
 	then
 		echo "$NAME."
 	else

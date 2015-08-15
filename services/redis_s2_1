@@ -2,7 +2,7 @@
 ### BEGIN INIT INFO
 # Provides:		redis_s2_1
 # Required-Start:	$syslog $remote_fs
-# Required-Stop:	$syslog $remote_fs
+# Required-Stop:	$syslog $remote_fs $redis_sentinel
 # Should-Start:		$local_fs
 # Should-Stop:		$local_fs
 # Default-Start:	2 3 4 5

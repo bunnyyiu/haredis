@@ -116,6 +116,9 @@ var processSwitchMasterMessage = function () {
   }
   var newConfig = updateConfig(currentConfig, shardName, oldIp, oldPort,
                                ip, port);
+  if (JSON.stringify(currentConfig) === JSON.stringify(newConfig)) {
+    return;
+  }
   var pathToWrite = WATCH_FILE;
   var writeToWatchFile = true;
   try {
@@ -139,7 +142,11 @@ var processMonitorMessage = function () {
   if (!currentConfig) {
     return;
   }
-  var newConfig = updateConfig(currentConfig, shardName, null, null, ip, port);
+  var newConfig = updateConfig(currentConfig, shardName, null, null,
+                               ip, port);
+  if (JSON.stringify(currentConfig) === JSON.stringify(newConfig)) {
+    return;
+  }
   var pathToWrite = WATCH_FILE;
   var writeToWatchFile = true;
   try {

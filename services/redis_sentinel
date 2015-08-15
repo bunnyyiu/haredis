@@ -14,12 +14,15 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/bin/redis-server
-DAEMON_ARGS="/etc/redis/sentinel.conf --sentinel"
+CONFIG=/etc/redis/sentinel.conf
+DAEMON_ARGS="$CONFIG --sentinel"
 NAME=redis_sentinel
 DESC=redis_sentinel
 
 RUNDIR=/var/run/redis
 PIDFILE=$RUNDIR/redis_sentinel.pid
+LOGFILE=/var/log/redis/redis_sentinel.log
+FILE_TO_WATCH=/var/lib/redis/nutcracker_update
 
 test -x $DAEMON || exit 0
 
@@ -38,6 +41,7 @@ case "$1" in
 	mkdir -p $RUNDIR
 	touch $PIDFILE
 	chown redis:redis $RUNDIR $PIDFILE
+        [ -f $LOGFILE ] && chown redis:redis $LOGFILE
 	chmod 755 $RUNDIR
 
 	if [ -n "$ULIMIT" ]
@@ -45,8 +49,9 @@ case "$1" in
 		ulimit -n $ULIMIT
 	fi
 
+    	test -e $FILE_TO_WATCH || (touch $FILE_TO_WATCH;chown redis:redis $FILE_TO_WATCH)
         # Run as root as it require to restart another process
-	if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS
+	if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
 	then
 		echo "$NAME."
 	else

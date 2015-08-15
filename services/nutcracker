@@ -45,6 +45,7 @@ do_start()
     touch $PIDFILE
     mkdir -p /var/run/nutcracker
     chown $USER:$GROUP -R /var/run/nutcracker
+    chown $USER:$GROUP $CONFFILE
     chmod 755 /var/run/nutcracker
 
     echo -n "Starting ${NAME}: "

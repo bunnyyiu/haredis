@@ -6,6 +6,7 @@ sport=26379
 function setUp {
   echo "Kill all related processes"
   ./killall.sh &> /dev/null
+  sleep 1
   echo "Reload configs"
   ./reloadConfig.sh &> /dev/null
 
@@ -195,4 +196,4 @@ testcase3
 startShutedDownRedis
 
 testcase4
-startShutedDownRedis
+#startShutedDownRedis

@@ -37,7 +37,7 @@ npm install
 popd
 
 # remove old data, for testing
-rm /var/lib/redis/*.rdb
-rm /var/lib/redis/*.aof
+rm -f /var/lib/redis/*.rdb
+rm -f /var/lib/redis/*.aof
 
 mkdir -p /var/run/redis

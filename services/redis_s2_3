@@ -14,12 +14,16 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/bin/redis-server
-DAEMON_ARGS=/etc/redis/redis_s2_3.conf
+CONFIG=/etc/redis/redis_s2_3.conf
+DAEMON_ARGS=$CONFIG
 NAME=redis_s2_3
 DESC=redis_s2_3
 
 RUNDIR=/var/run/redis
 PIDFILE=$RUNDIR/redis_s2_3.pid
+LOGFILE=/var/log/redis/redis_s2_3.log
+RDB=/var/lib/redis/dump_s2_3.rdb
+AOF=/var/lib/redis/appendonly_s2_3.aof
 
 test -x $DAEMON || exit 0
 
@@ -37,7 +41,7 @@ case "$1" in
 	echo -n "Starting $DESC: "
 	mkdir -p $RUNDIR
 	touch $PIDFILE
-	chown redis:redis $RUNDIR $PIDFILE
+	chown redis:redis $RUNDIR $PIDFILE $CONFIG $LOGFILE $RDB $AOF
 	chmod 755 $RUNDIR
 
 	if [ -n "$ULIMIT" ]

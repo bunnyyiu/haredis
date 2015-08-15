@@ -14,12 +14,16 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/bin/redis-server
-DAEMON_ARGS=/etc/redis/redis_s1_1.conf
+CONFIG=/etc/redis/redis_s1_1.conf
+DAEMON_ARGS=$CONFIG
 NAME=redis_s1_1
 DESC=redis_s1_1
 
 RUNDIR=/var/run/redis
 PIDFILE=$RUNDIR/redis_s1_1.pid
+LOGFILE=/var/log/redis/redis_s1_1.log
+RDB=/var/lib/redis/dump_s1_1.rdb
+AOF=/var/lib/redis/appendonly_s1_1.aof
 
 test -x $DAEMON || exit 0
 
@@ -37,7 +41,7 @@ case "$1" in
 	echo -n "Starting $DESC: "
 	mkdir -p $RUNDIR
 	touch $PIDFILE
-	chown redis:redis $RUNDIR $PIDFILE
+	chown redis:redis $RUNDIR $PIDFILE $CONFIG $LOGFILE $RDB $AOF
 	chmod 755 $RUNDIR
 
 	if [ -n "$ULIMIT" ]

@@ -8,10 +8,10 @@
 ### Fallover
 ```
   1) A is master, B is slave
-  2) A crashes, sentinel mark A as failed
+  2) A crashes, sentinel detected and then mark A as failed
   3) sentinal elect B as new master
-  4) sentinel execute notification.js and this update B as new endpoint in twemproxy config
-  5) notification.js kill twemproxy and retart twemproxy to reload config
+  4) sentinel execute notification.js and this will update B as new endpoint in twemproxy staging config
+  5) twemproxy notice the new config. It restart itself to reload config
   6) twemproxy point to B
 ```
 
@@ -25,12 +25,55 @@
 ./installServices.sh
 ```
 
-### Run
+### Run Services
+```
+service redis_s1_1 start
+service redis_s1_2 start
+service redis_s1_3 start
+
+service redis_s2_1 start
+service redis_s2_2 start
+service redis_s2_3 start
+
+service redis_sentinel start
+service nutcracker start
+```
+
+### Stop Services
+```
+service nutcracker stop
+service redis_sentinel stop
+
+service redis_s1_1 stop
+service redis_s1_2 stop
+service redis_s1_3 stop
+
+service redis_s2_1 stop
+service redis_s2_2 stop
+service redis_s2_3 stop
+```
+
+### Manual Run (not using service)
 ```
 ./run.sh
 ```
 
-### Test
+### Manual Stop (not using service)
+```
+./killall.sh
+```
+
+### Load Test Data
+```
+./loadData.sh
+```
+
+### Verify Test Data
+```
+./checkData.sh
+```
+
+### Test (not using service)
 ```
 ./test.sh
 ```

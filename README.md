@@ -20,6 +20,11 @@
 ./install.sh
 ```
 
+### Install Services
+```
+./installServices.sh
+```
+
 ### Run
 ```
 ./run.sh

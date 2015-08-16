@@ -38,61 +38,61 @@ ulimit -Sn 100000
 
 do_start()
 {
-    if [ -f $WATCH_PID_FILE ]; then
-      kill $(cat $WATCH_PID_FILE) 2> /dev/null
-      rm $WATCH_PID_FILE 2> /dev/null
-    fi
-    touch $PIDFILE
-    mkdir -p /var/run/nutcracker
-    chown $USER:$GROUP -R /var/run/nutcracker
-    chown $USER:$GROUP $CONFFILE
-    chmod 755 /var/run/nutcracker
+  if [ -f $WATCH_PID_FILE ]; then
+    kill $(cat $WATCH_PID_FILE) 2> /dev/null
+    rm $WATCH_PID_FILE 2> /dev/null
+  fi
+  touch $PIDFILE
+  mkdir -p /var/run/nutcracker
+  chown $USER:$GROUP -R /var/run/nutcracker
+  chown $USER:$GROUP $CONFFILE
+  chmod 755 /var/run/nutcracker
 
-    echo -n "Starting ${NAME}: "
-    start-stop-daemon --start --quiet -m --pidfile $PIDFILE --chuid $USER:$GROUP --exec $DAEMON -- \
-        $DAEMON_ARGS
-        case "$?" in
-            0|1) echo "STARTED." ;;
-            2) echo "FAILED." ;;
-        esac
-    test -e $FILE_TO_WATCH || (touch $FILE_TO_WATCH;chown $REDIS_USER:$REDIS_USER $FILE_TO_WATCH)
-    iwatch -c "cat $FILE_TO_WATCH > $CONFFILE; chown $USER:$GROUP $CONFFILE;service $NAME restart" $FILE_TO_WATCH &
-    echo $! > $WATCH_PID_FILE
+  echo -n "Starting ${NAME}: "
+  start-stop-daemon --start --quiet -m --pidfile $PIDFILE --chuid $USER:$GROUP --exec $DAEMON -- \
+    $DAEMON_ARGS
+    case "$?" in
+      0|1) echo "STARTED." ;;
+      2) echo "FAILED." ;;
+    esac
+  test -e $FILE_TO_WATCH || (touch $FILE_TO_WATCH;chown $REDIS_USER:$REDIS_USER $FILE_TO_WATCH)
+  iwatch -c "cat $FILE_TO_WATCH > $CONFFILE; chown $USER:$GROUP $CONFFILE;service $NAME restart" $FILE_TO_WATCH &
+  echo $! > $WATCH_PID_FILE
 }
 
 do_stop()
 {
-    if [ -f $WATCH_PID_FILE ]; then
-      kill $(cat $WATCH_PID_FILE) 2> /dev/null
-      rm $WATCH_PID_FILE 2> /dev/null
-    fi
-    echo -n "Stopping ${NAME}: "
-    start-stop-daemon --stop --quiet --pidfile $PIDFILE --exec $DAEMON || true
+  if [ -f $WATCH_PID_FILE ]; then
+    kill $(cat $WATCH_PID_FILE) 2> /dev/null
+    rm $WATCH_PID_FILE 2> /dev/null
+  fi
+  echo -n "Stopping ${NAME}: "
+  start-stop-daemon --stop --quiet --pidfile $PIDFILE --exec $DAEMON || true
 
-    case "$?" in
-        0|1) echo "STOPPED.";;
-        2) echo "FAILED." ;;
-    esac
+  case "$?" in
+    0|1) echo "STOPPED.";;
+    2) echo "FAILED." ;;
+  esac
 }
 
 case "$1" in
-    start)
-        do_start
+  start)
+    do_start
+  ;;
+  stop)
+    do_stop
+  ;;
+  status)
+    status_of_proc -p $PIDFILE "$DAEMON" nutcracker && exit 0 || exit $?
+  ;;
+  restart)
+    do_stop
+    do_start
+  ;;
+  *)
+    echo "Usage: $SCRIPTNAME {start|stop|status|restart}" >&2
+    exit 3
     ;;
-    stop)
-        do_stop
-    ;;
-    status)
-      status_of_proc -p $PIDFILE "$DAEMON" nutcracker && exit 0 || exit $?
-    ;;
-    restart)
-      do_stop
-      do_start
-    ;;
-    *)
-        echo "Usage: $SCRIPTNAME {start|stop|status|restart}" >&2
-        exit 3
-        ;;
 esac
 
 exit

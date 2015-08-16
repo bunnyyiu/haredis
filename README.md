@@ -122,28 +122,39 @@ To prevent conflict, please stop all services before running this script.
 
 Test Result :
 ```
+The existing data/config in redis will be removed/reloaded and running services will be stopped, are you sure? (y/n) y
+Ensure related services are stopped
 Kill all related processes
 Reload configs
 Remove old data
 Start the stack
 Data loaded
-Test case 1 : kill the master node of shard 1 (127.0.0.1 6666): .....
-New master is 127.0.0.1 6667
+
+Test case 1 : test if data loaded correctly:
 Redis OK (1000 items all existed)
 
-Test case 2 : kill the master node of shard 2 (127.0.0.1 7666): .....
+Test case 2 : kill the master node of shard 1 (127.0.0.1 6666): ....
+New master is 127.0.0.1 6668
+Redis OK (1000 items all existed)
+
+Test case 3 : kill the master node of shard 2 (127.0.0.1 7666): ....
 New master is 127.0.0.1 7667
 Redis OK (1000 items all existed)
 
-Test case 3 : kill the master nodes of shard 1 & 2 (127.0.0.1 6667, 127.0.0.1 7667):
-New master of shard 1 is 127.0.0.1 6668
+Test case 4 : kill the master nodes of shard 1 & 2 (127.0.0.1 6668, 127.0.0.1 7667):
+New master of shard 1 is 127.0.0.1 6667
 New master of shard 2 is 127.0.0.1 7668
 Redis OK (1000 items all existed)
 
-Test case 4 : kill flour redis instances (two instances [one master, one slave] in each shard) (127.0.0.1 6668, 127.0.0.1 6666, 127.0.0.1 7668, 127.0.0.1 7666):
+Test case 5 : kill flour redis instances (two instances [one master, one slave] in each shard) (127.0.0.1 6667, 127.0.0.1 6668, 127.0.0.1 7668, 127.0.0.1 7667):
 New master of shard 1 is 127.0.0.1 6666
 New master of shard 2 is 127.0.0.1 7666
 Redis OK (1000 items all existed)
+
+Test case 6 : check sharding is working (key only appear in one shard)
+OK
+
+Remove test data
 ```
 
 ### Benchmark with pipelining (twemproxy)

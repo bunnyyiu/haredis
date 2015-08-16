@@ -1,19 +1,19 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:		redis_sentinel
-# Required-Start:	$syslog $remote_fs $redis_s1_1 $redis_s1_2 $redis_s2_3 $redis_s2_1 $redis_s2_2 $redis_s2_3
-# Required-Stop:	$syslog $remote_fs
-# Should-Start:		$local_fs
-# Should-Stop:		$local_fs
-# Default-Start:	2 3 4 5
-# Default-Stop:		0 1 6
-# Short-Description:	redis-server (redis_sentinel) - Persistent key-value db
-# Description:		redis-server (redis_sentinel) - Persistent key-value db
+# Provides:    redis_sentinel
+# Required-Start:  $syslog $remote_fs $redis_s1_1 $redis_s1_2 $redis_s2_3 $redis_s2_1 $redis_s2_2 $redis_s2_3
+# Required-Stop:  $syslog $remote_fs
+# Should-Start:    $local_fs
+# Should-Stop:    $local_fs
+# Default-Start:  2 3 4 5
+# Default-Stop:    0 1 6
+# Short-Description:  redis_sentinel - Redis Cluster agent
+# Description:    redis_sentinel - Redis Cluster agent
 ### END INIT INFO
 
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/bin/redis-server
+DAEMON=/usr/bin/redis-sentinel
 CONFIG=/etc/redis/sentinel.conf
 DAEMON_ARGS="$CONFIG --sentinel"
 NAME=redis_sentinel
@@ -28,7 +28,7 @@ test -x $DAEMON || exit 0
 
 if [ -r /etc/default/$NAME ]
 then
-	. /etc/default/$NAME
+  . /etc/default/$NAME
 fi
 
 . /lib/lsb/init-functions
@@ -37,52 +37,51 @@ set -e
 
 case "$1" in
   start)
-	echo -n "Starting $DESC: "
-	mkdir -p $RUNDIR
-	touch $PIDFILE
-	chown redis:redis $RUNDIR $PIDFILE
-        [ -f $LOGFILE ] && chown redis:redis $LOGFILE
-	chmod 755 $RUNDIR
+  echo -n "Starting $DESC: "
+  mkdir -p $RUNDIR
+  touch $PIDFILE
+  chown redis:redis $RUNDIR $PIDFILE
+  [ -f $LOGFILE ] && chown redis:redis $LOGFILE
+  chmod 755 $RUNDIR
 
-	if [ -n "$ULIMIT" ]
-	then
-		ulimit -n $ULIMIT
-	fi
+  if [ -n "$ULIMIT" ]
+  then
+    ulimit -n $ULIMIT
+  fi
 
-    	test -e $FILE_TO_WATCH || (touch $FILE_TO_WATCH;chown redis:redis $FILE_TO_WATCH)
-        # Run as root as it require to restart another process
-	if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
-	then
-		echo "$NAME."
-	else
-		echo "failed"
-	fi
-	;;
+  test -e $FILE_TO_WATCH || (touch $FILE_TO_WATCH;chown redis:redis $FILE_TO_WATCH)
+  if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
+  then
+    echo "$NAME."
+  else
+    echo "failed"
+  fi
+  ;;
   stop)
-	echo -n "Stopping $DESC: "
-	if start-stop-daemon --stop --retry forever/TERM/1 --quiet --oknodo --pidfile $PIDFILE --exec $DAEMON
-	then
-		echo "$NAME."
-	else
-		echo "failed"
-	fi
-	rm -f $PIDFILE
-	sleep 1
-	;;
+  echo -n "Stopping $DESC: "
+  if start-stop-daemon --stop --retry forever/TERM/1 --quiet --oknodo --pidfile $PIDFILE --exec $DAEMON
+  then
+    echo "$NAME."
+  else
+    echo "failed"
+  fi
+  rm -f $PIDFILE
+  sleep 1
+  ;;
 
   restart|force-reload)
-	${0} stop
-	${0} start
-	;;
+  ${0} stop
+  ${0} start
+  ;;
 
   status)
-	status_of_proc -p ${PIDFILE} ${DAEMON} ${NAME}
-	;;
+  status_of_proc -p ${PIDFILE} ${DAEMON} ${NAME}
+  ;;
 
   *)
-	echo "Usage: /etc/init.d/$NAME {start|stop|restart|force-reload|status}" >&2
-	exit 1
-	;;
+  echo "Usage: /etc/init.d/$NAME {start|stop|restart|force-reload|status}" >&2
+  exit 1
+  ;;
 esac
 
 exit 0

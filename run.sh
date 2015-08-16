@@ -15,5 +15,5 @@ redis-server /etc/redis/redis_s2_3.conf
 sleep 1
 
 # sentinel
-redis-server /etc/redis/sentinel.conf --sentinel
+redis-sentinel /etc/redis/sentinel.conf --sentinel
 sleep 1

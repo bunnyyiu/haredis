@@ -40,7 +40,7 @@ case "$1" in
   echo -n "Starting $DESC: "
   mkdir -p $RUNDIR
   touch $PIDFILE
-  chown redis:redis $RUNDIR $PIDFILE
+  chown redis:redis $RUNDIR $PIDFILE $CONFIG
   [ -f $LOGFILE ] && chown redis:redis $LOGFILE
   chmod 755 $RUNDIR
 

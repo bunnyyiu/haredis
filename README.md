@@ -73,12 +73,36 @@ service redis_s2_3 stop
 ./checkData.sh
 ```
 
+### Check Redis Status
+```
+./checkStatus.sh
+```
+
+Check Redis Output:
+```
+Redis sentinel running :
+	127.0.0.1 26379 : YES
+6379 port running :
+	127.0.0.1 6379 : YES
+Shard 1 master running :
+	127.0.0.1 6668 : YES
+Shard 1 slaves running :
+	127.0.0.1 6667 : YES
+	127.0.0.1 6666 : YES
+Shard 2 master :
+	127.0.0.1 7666 : YES
+Shard 2 slaves running :
+	127.0.0.1 7667 : YES
+	127.0.0.1 7668 : YES
+```
+
 ### Test (not using service)
+To prevent conflict, please stop all services before running this script.
 ```
 ./test.sh
 ```
 
-### Test Results (output of ./test.sh)
+Test Result :
 ```
 Kill all related processes
 Reload configs

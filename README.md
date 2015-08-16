@@ -2,6 +2,24 @@
 
 - twemproxy: sharding
 - sentinel: autoswitch master/slave
+- twemproxySeninel: to reload twemproxy config from sentinel notification
+
+Twemproxy : It was configured to have 2 shards, each shard contains three redis instances.
+In service mode, It will restart itself if the config in staging area if being updated.
+I used a library called iwatch to monitoring a staging config, so another process can reload twemproxy with updated config without granting additional privilege.
+
+The iwatch command used:
+```
+iwatch -c "cat /var/lib/redis/nutcracker_update > /etc/twemproxy.cfg; chown nobody:nogroup /etc/twemproxy.cfg;service nutcracker restart" /var/lib/redis/nutcracker_update
+```
+It will monitor /var/lib/redis/nutcracker_update and it will be triggered to run the comamnd specified if the /var/lib/redis/nutcracker_update is being modified and closed (event close_write). It will then cat the content into /etc/twemproxy.cfg and restart twemproxy service.
+
+Redis-sentinel : It monitors redis instances in each shard and elect new master if old master is dead.
+It notify the twemproxy by update the staging config file ( /var/lib/redis/nutcracker_update) with the help of twemproxySeninel.
+
+twemproxySeninel (notification.js in below diagram) : a node.js app I developed to update the twemproxy config with sentinel notification.
+If it detect twemproxy is running in service mode, it will only update the staging config and let the iwatch monitor to restart twemproxy.
+Otherwise, it will write to twemproxy and restart twemproxy. It may be released as separate npm library eventuality.
 
 !["diagram"](diagram.png)
 
@@ -179,13 +197,18 @@ LRANGE_600 (first 600 elements): 6281.41 requests per second
 ```
 
 ### Limitation and Assumption
-1) Not all Redis commands are supported, please refer to the below reference.
-https://github.com/twitter/twemproxy/blob/master/notes/redis.md
+1) Not all Redis commands are supported, please check
+https://github.com/twitter/twemproxy/blob/master/notes/redis.md.
 
-2) It took 4-5 seconds for fallover in each shard.
+2) It tooks 4-5 seconds for fallover in each shard. This introduces 4-5 seconds down time.
+
+3) How to resharding (add or remove shard) in Twemproxy is not clear at this moment.
+Probably require some manual scripts to move data around.
+Consider to upgrade the solution to redis-cluster if you can confirm the driver is available for your languages.
 
 ### Notice
 tested on
 - redis 2.8.17
 - twemproxy 0.4.1
+- node.js v0.10.29
 - Debian 8

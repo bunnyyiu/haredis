@@ -297,4 +297,3 @@ testcase5
 startShutedDownRedis
 
 testcase6
-startShutedDownRedis

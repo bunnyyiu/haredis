@@ -188,3 +188,4 @@ https://github.com/twitter/twemproxy/blob/master/notes/redis.md
 tested on
 - redis 2.8.17
 - twemproxy 0.4.1
+- Debian 8

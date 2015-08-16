@@ -11,8 +11,8 @@ function setUp {
   ./reloadConfig.sh &> /dev/null
 
   echo "Remove old data"
-  rm /var/lib/redis/*.rdb
-  rm /var/lib/redis/*.aof
+  rm -f /var/lib/redis/*.rdb
+  rm -f /var/lib/redis/*.aof
 
   echo "Start the stack"
   ./run.sh &> /dev/null

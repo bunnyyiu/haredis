@@ -2,7 +2,7 @@
 
 sport=26379
 
-
+# Test setup
 function setUp {
   echo "Kill all related processes"
   ./killall.sh &> /dev/null
@@ -19,8 +19,13 @@ function setUp {
   ./loadData.sh
 }
 
+# Test Teardown
 function tearDown {
   ./killall.sh > /dev/null
+
+  echo "Remove test data"
+  rm /var/lib/redis/*.rdb
+  rm /var/lib/redis/*.aof
 }
 # ensure tearDown is called even this script break
 trap tearDown EXIT
@@ -69,6 +74,7 @@ function waitForShardReady {
   echo .
 }
 
+# Check Redis status
 function redisStatus {
   # check if those 1000 items are all exist
   ./checkData.sh > /dev/null
@@ -79,6 +85,7 @@ function redisStatus {
   fi
 }
 
+# Start Redis instance that is not running
 function startShutedDownRedis {
    for f in /etc/redis/redis_s*.conf; do
      # get the file name without path and extensions
@@ -147,6 +154,7 @@ function testcase3 {
   echo
 }
 
+# Get Redis slaves
 function getRedisSlaves {
   name=$1
   echo `redis-cli -p $sport sentinel slaves $name`
@@ -196,4 +204,4 @@ testcase3
 startShutedDownRedis
 
 testcase4
-#startShutedDownRedis
+startShutedDownRedis
